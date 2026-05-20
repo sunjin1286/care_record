@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>돌봄기록서 | 자기돌봄비 사용 현황</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1a4fa0;
+    --primary-light: #e8effa;
+    --primary-mid: #3b6cc9;
+    --accent: #e84545;
+    --success: #2a7f62;
+    --surface: #ffffff;
+    --surface-2: #f7f8fc;
+    --border: #d0d9ec;
+    --text: #1a1e2e;
+    --text-2: #4a5068;
+    --text-3: #8a91a8;
+    --radius: 10px;
+    --shadow: 0 2px 16px rgba(26,79,160,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #edf1f9;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 16px 64px;
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    background: var(--primary);
+    border-radius: 14px 14px 0 0;
+    padding: 36px 40px 28px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .header h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .header p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.7;
+  }
+
+  /* Progress */
+  .progress-bar-wrap {
+    background: #fff;
+    padding: 16px 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .progress-label { font-size: 12px; color: var(--text-2); white-space: nowrap; }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-mid), #5b9bd5);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-pct { font-size: 12px; color: var(--primary); font-weight: 600; min-width: 36px; text-align: right; }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    padding: 32px 40px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  .card + .card { border-top: 1px solid var(--border); }
+  .card:last-of-type { border-bottom: 1px solid var(--border); border-radius: 0 0 14px 14px; }
+
+  /* Section label */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--primary-mid);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Info grid */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .info-item label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-3);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .info-item input {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface-2);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .info-item input:focus { border-color: var(--primary-mid); background: #fff; }
+  .info-item.full { grid-column: 1/-1; }
+
+  /* Question */
+  .q-block { margin-bottom: 28px; }
+  .q-block:last-child { margin-bottom: 0; }
+  .q-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  .q-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .q-title .q-num { margin-top: 1px; }
+  .q-desc {
+    font-size: 12px;
+    color: var(--text-3);
+    margin: -8px 0 14px 32px;
+  }
+  .required { color: var(--accent); margin-left: 3px; }
+
+  /* Radio / Checkbox */
+  .options-list { display: flex; flex-direction: column; gap: 8px; margin-left: 2px; }
+  .opt-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--surface-2);
+  }
+  .opt-item:hover { border-color: var(--primary-mid); background: var(--primary-light); }
+  .opt-item.selected { border-color: var(--primary); background: var(--primary-light); }
+  .opt-item input[type="radio"],
+  .opt-item input[type="checkbox"] { margin-top: 2px; accent-color: var(--primary); flex-shrink: 0; width: 16px; height: 16px; }
+  .opt-item .opt-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+  .opt-item .opt-sub { font-size: 12px; color: var(--text-3); display: block; margin-top: 2px; }
+
+  /* Inline text input in option */
+  .opt-inline-input {
+    margin-top: 8px;
+    display: none;
+  }
+  .opt-inline-input input, .opt-inline-input textarea {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    background: #fff;
+  }
+  .opt-inline-input input:focus, .opt-inline-input textarea:focus { border-color: var(--primary-mid); }
+  .opt-inline-input.show { display: block; }
+
+  /* Likert grid */
+  .likert-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-left: 2px; }
+  .likert-table th {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-2);
+    padding: 8px 6px;
+    text-align: center;
+    background: var(--surface-2);
+    border-bottom: 1.5px solid var(--border);
+  }
+  .likert-table th:first-child { text-align: left; width: 38%; padding-left: 12px; }
+  .likert-table td {
+    padding: 10px 6px;
+    text-align: center;
+    border-bottom: 1px solid #eef0f7;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .likert-table td:first-child { text-align: left; padding-left: 12px; font-size: 13px; }
+  .likert-table tr:last-child td { border-bottom: none; }
+  .likert-table tr:hover td { background: var(--primary-light); }
+  .likert-table input[type="radio"] { accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer; }
+
+  /* Usage table */
+  .usage-table-wrap { overflow-x: auto; margin-left: 2px; }
+  .usage-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; min-width: 540px; }
+  .usage-table th {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-2);
+    padding: 6px 8px;
+    background: var(--surface-2);
+    border-bottom: 1.5px solid var(--border);
+  }
+  .usage-table td { padding: 6px 6px; vertical-align: middle; }
+  .usage-table input, .usage-table select {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    padding: 7px 9px;
+    font-size: 12px;
+    font-family: inherit;
+    outline: none;
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  .usage-table input:focus, .usage-table select:focus { border-color: var(--primary-mid); background: #fff; }
+  .add-row-btn {
+    margin-top: 10px;
+    background: var(--primary-light);
+    border: 1.5px dashed var(--primary-mid);
+    color: var(--primary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .add-row-btn:hover { background: #dce8f8; }
+  .del-row-btn {
+    background: none;
+    border: none;
+    color: var(--text-3);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  .del-row-btn:hover { color: var(--accent); }
+
+  /* Rank inputs */
+  .rank-list { display: flex; flex-direction: column; gap: 10px; margin-left: 2px; }
+  .rank-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+  }
+  .rank-badge {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .rank-inputs { flex: 1; display: flex; gap: 8px; }
+  .rank-inputs input {
+    flex: 1;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    background: #fff;
+    color: var(--text);
+  }
+  .rank-inputs input:focus { border-color: var(--primary-mid); }
+
+
+  /* Q3 비활성 행 */
+  .q3-row.q3-inactive td {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .q3-row.q3-active td {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .q3-row.q3-active {
+    background: var(--primary-light);
+  }
+  .q3-row.q3-active td:first-child {
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  /* Textarea */
+  .txt-area {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface-2);
+    resize: vertical;
+    outline: none;
+    min-height: 80px;
+    transition: border-color 0.2s;
+  }
+  .txt-area:focus { border-color: var(--primary-mid); background: #fff; }
+  .char-count { font-size: 11px; color: var(--text-3); text-align: right; margin-top: 4px; }
+
+  /* Section conditional */
+  .section-block { display: none; }
+  .section-block.visible { display: block; }
+  .always-visible { display: block; }
+
+  /* Notice box */
+  .notice-box {
+    background: #fff8e1;
+    border: 1.5px solid #f9c741;
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #6b4e00;
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+  .notice-box strong { color: #c47a00; }
+
+  /* Divider */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 8px 0 20px; }
+
+  /* Submit */
+  .submit-wrap {
+    text-align: center;
+    padding: 32px 40px;
+    background: var(--surface);
+    border-radius: 0 0 14px 14px;
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+  .submit-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 15px 48px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 16px rgba(26,79,160,0.25);
+  }
+  .submit-btn:hover { background: #163d80; transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { background: #b0bdd8; cursor: not-allowed; transform: none; }
+  .submit-note { font-size: 12px; color: var(--text-3); margin-top: 12px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1a2340;
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    text-align: center;
+    min-width: 260px;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-left: 4px solid #2a7f62; }
+  .toast.error { border-left: 4px solid var(--accent); }
+
+  /* Success page */
+  .success-page {
+    display: none;
+    text-align: center;
+    padding: 60px 40px;
+    background: var(--surface);
+    border-radius: 0 0 14px 14px;
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: #e8f8f2;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 32px;
+  }
+  .success-page h2 { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .success-page p { font-size: 14px; color: var(--text-2); line-height: 1.7; }
+
+  /* Official section */
+  .official-section {
+    background: #f0f4fc;
+    border: 1.5px solid var(--border);
+    border-top: 3px solid var(--primary);
+  }
+  .official-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--primary-light);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 10px;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+
+  /* ===== 수정 코드 박스 ===== */
+  .edit-code-box {
+    background: #f0faf6;
+    border: 2px solid #2a7f62;
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 24px;
+    text-align: center;
+  }
+  .edit-code-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2a7f62;
+    margin-bottom: 10px;
+    letter-spacing: 0.3px;
+  }
+  .edit-code-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: 4px;
+    font-family: monospace;
+    background: #fff;
+    border: 2px dashed #2a7f62;
+    border-radius: 8px;
+    padding: 12px 20px;
+    display: inline-block;
+    margin-bottom: 14px;
+    min-width: 200px;
+  }
+  .copy-code-btn {
+    display: block;
+    margin: 0 auto 12px;
+    background: #2a7f62;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .copy-code-btn:hover { background: #1e5f48; }
+  .edit-code-note {
+    font-size: 12px;
+    color: #4a7a68;
+    line-height: 1.6;
+  }
+  .edit-load-btn {
+    background: var(--primary-light);
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .edit-load-btn:hover { background: var(--primary); color: #fff; }
+
+  /* 수정 모드 배너 */
+  .edit-mode-banner {
+    display: none;
+    background: #fff8e1;
+    border: 2px solid #f9c741;
+    border-radius: 0;
+    padding: 12px 40px;
+    font-size: 13px;
+    color: #6b4e00;
+    font-weight: 600;
+    text-align: center;
+  }
+  .edit-mode-banner.show { display: block; }
+  .edit-mode-banner span { color: var(--primary); font-size: 14px; }
+
+  /* 수정 코드 입력 화면 */
+  .edit-entry-page {
+    display: none;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 14px 14px;
+    padding: 48px 40px;
+    text-align: center;
+  }
+  .edit-entry-page.show { display: block; }
+  .edit-entry-inner { max-width: 360px; margin: 0 auto; }
+
+  /* 수정하기 버튼 (progress bar) */
+  .modify-entry-btn {
+    background: none;
+    border: 1.5px solid var(--primary-mid);
+    color: var(--primary);
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .modify-entry-btn:hover { background: var(--primary); color: #fff; }
+
+  /* ===== 파일 업로드 ===== */
+  .upload-zone {
+    border: 2.5px dashed var(--border);
+    border-radius: 12px;
+    background: var(--surface-2);
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 2px;
+  }
+  .upload-zone.drag-over {
+    border-color: var(--primary-mid);
+    background: var(--primary-light);
+  }
+  .upload-zone.has-files {
+    border-color: var(--success);
+    background: #f0faf6;
+  }
+  .upload-icon { font-size: 36px; margin-bottom: 10px; line-height: 1; }
+  .upload-main { font-size: 14px; font-weight: 600; color: var(--text-2); margin-bottom: 12px; }
+  .upload-browse-btn {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 10px;
+  }
+  .upload-browse-btn:hover { background: #163d80; }
+  .upload-hint { font-size: 11px; color: var(--text-3); }
+
+  .file-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; margin-left: 2px; }
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    transition: border-color 0.2s;
+  }
+  .file-item.done { border-color: var(--success); }
+  .file-item.error { border-color: var(--accent); }
+  .file-icon { font-size: 20px; flex-shrink: 0; }
+  .file-info { flex: 1; min-width: 0; }
+  .file-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file-size { font-size: 11px; color: var(--text-3); }
+  .file-status { font-size: 12px; font-weight: 600; flex-shrink: 0; }
+  .file-status.done { color: var(--success); }
+  .file-status.error { color: var(--accent); }
+  .file-status.pending { color: var(--text-3); }
+  .file-remove {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-3); font-size: 16px; padding: 2px 4px;
+    line-height: 1; flex-shrink: 0; transition: color 0.15s;
+  }
+  .file-remove:hover { color: var(--accent); }
+
+
+  .retry-btn {
+    background: #fff3e0;
+    border: 1.5px solid #f9a825;
+    color: #e65100;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .retry-btn:hover { background: #ffe0b2; }
+
+  .upload-progress-bar {
+    height: 6px; background: var(--border); border-radius: 99px;
+    overflow: hidden; margin-bottom: 6px;
+  }
+  .upload-progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--primary-mid), #5b9bd5);
+    border-radius: 99px; transition: width 0.3s;
+  }
+  .upload-status-text { font-size: 12px; color: var(--text-2); text-align: center; }
+
+  @media (max-width: 580px) {
+    .header { padding: 28px 24px 22px; }
+    .card { padding: 24px 20px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .progress-bar-wrap { padding: 14px 20px; }
+    .submit-wrap { padding: 24px 20px; }
+    .header h1 { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-badge">Seoul Metropolitan Government</div>
+    <h1>돌봄기록서<br>자기돌봄비 사용 현황</h1>
+    <p>가족돌봄청소년·청년 자기돌봄비 지원사업 | 응답 후 자동 저장됩니다.</p>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar-wrap">
+    <span class="progress-label">작성 진행률</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-pct" id="progressPct">0%</span>
+    <button type="button" class="modify-entry-btn" onclick="showEditEntry()">수정하기</button>
+  </div>
+
+  <form id="mainForm">
+
+    <!-- 수정 모드 배너 -->
+    <div class="edit-mode-banner" id="editModeBanner">
+      ✏️ 수정 모드 &nbsp;|&nbsp; <span id="editModeCode"></span> &nbsp;의 제출 내용을 불러왔습니다. 수정 후 다시 제출해 주세요.
+    </div>
+
+    <!-- 기본 정보 -->
+    <div class="card">
+      <div class="section-label">기본 정보</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>성명 <span class="required">*</span></label>
+          <input type="text" name="name" placeholder="홍길동" required>
+        </div>
+        <div class="info-item">
+          <label>자치구명 <span class="required">*</span></label>
+          <input type="text" name="district" placeholder="예: 강남구" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="card">
+      <div class="section-label">자기돌봄비 사용 여부</div>
+      <div class="q-block">
+        <div class="q-title"><span class="q-num">1</span><span>이번 기간 동안 자기돌봄비를 사용하였습니까?<span class="required">*</span></span></div>
+        <div class="options-list" id="q1Options">
+          <label class="opt-item" onclick="selectOpt(this, 'q1')">
+            <input type="radio" name="q1" value="사용함" required>
+            <span class="opt-text">사용함 <span class="opt-sub">→ 2번, 3번, 4번 문항으로 이동</span></span>
+          </label>
+          <label class="opt-item" onclick="selectOpt(this, 'q1')">
+            <input type="radio" name="q1" value="사용하지않음">
+            <span class="opt-text">사용하지 않음 <span class="opt-sub">→ 5번 문항으로 이동</span></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 사용함 섹션 ===== -->
+    <div class="section-block" id="sectionUsed">
+
+      <!-- Q2 사용내역 -->
+      <div class="card">
+        <div class="section-label">사용 내역</div>
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">2</span><span>자기돌봄비를 어떻게 사용하였습니까?</span></div>
+          <p class="q-desc">사용한 내역을 모두 입력해 주세요. 행 추가 버튼으로 내역을 늘릴 수 있습니다.</p>
+          <div class="usage-table-wrap">
+            <table class="usage-table">
+              <thead>
+                <tr>
+                  <th style="width:38px">#</th>
+                  <th>사용일</th>
+                  <th>사용처</th>
+                  <th style="width:90px">금액(원)</th>
+                  <th>사용분야</th>
+                  <th style="width:32px"></th>
+                </tr>
+              </thead>
+              <tbody id="usageBody">
+                <tr>
+                  <td style="text-align:center;font-size:12px;color:var(--text-3)">1</td>
+                  <td><input type="date" name="use_date_1"></td>
+                  <td><input type="text" name="use_place_1" placeholder="사용처 입력"></td>
+                  <td><input type="number" name="use_amount_1" placeholder="0" min="0"></td>
+                  <td>
+                    <select name="use_category_1">
+                      <option value="">-- 선택 --</option>
+                      <option>휴식·여가</option>
+                      <option>신체 건강</option>
+                      <option>마음 건강</option>
+                      <option>사회관계</option>
+                      <option>학업·교육</option>
+                      <option>진로·미래 준비</option>
+                      <option>생활 안정</option>
+                      <option>기타</option>
+                    </select>
+                  </td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button type="button" class="add-row-btn" onclick="addUsageRow()">+ 행 추가</button>
+        </div>
+      </div>
+
+      <!-- Q3 도움 여부 (분야별) -->
+      <div class="card">
+        <div class="section-label">자기돌봄비 효과</div>
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">3</span><span>자기돌봄비가 본인의 삶에 도움이 되었나요?</span></div>
+          <p class="q-desc">2번 문항에서 선택한 사용분야에 한해 자동 활성화됩니다. 활성화된 분야별로 도움 정도를 선택해 주세요.</p>
+          <div style="overflow-x:auto">
+            <table class="likert-table">
+              <thead>
+                <tr>
+                  <th>분야</th>
+                  <th>매우 도움됨</th>
+                  <th>도움됨</th>
+                  <th>도움 안 됨</th>
+                  <th>전혀 안 됨</th>
+                </tr>
+              </thead>
+              <tbody id="q3Body">
+                <tr class="q3-row q3-inactive" data-category="휴식·여가"><td>휴식·여가</td><td><input type="radio" name="help_leisure" value="4" disabled></td><td><input type="radio" name="help_leisure" value="3" disabled></td><td><input type="radio" name="help_leisure" value="2" disabled></td><td><input type="radio" name="help_leisure" value="1" disabled></td></tr>
+                <tr class="q3-row q3-inactive" data-category="신체 건강"><td>신체 건강</td><td><input type="radio" name="help_body" value="4" disabled></td><td><input type="radio" name="help_body" value="3" disabled></td><td><input type="radio" name="help_body" value="2" disabled></td><td><input type="radio" name="help_body" value="1" disabled></td></tr>
+                <tr class="q3-row q3-inactive" data-category="마음 건강"><td>마음 건강</td><td><input type="radio" name="help_mind" value="4" disabled></td><td><input type="radio" name="help_mind" value="3" disabled></td><td><input type="radio" name="help_mind" value="2" disabled></td><td><input type="radio" name="help_mind" value="1" disabled></td></tr>
+                <tr class="q3-row q3-inactive" data-category="사회관계"><td>사회관계</td><td><input type="radio" name="help_social" value="4" disabled></td><td><input type="radio" name="help_social" value="3" disabled></td><td><input type="radio" name="help_social" value="2" disabled></td><td><input type="radio" name="help_social" value="1" disabled></td></tr>
+                <tr class="q3-row q3-inactive" data-category="학업·교육"><td>학업·교육</td><td><input type="radio" name="help_edu" value="4" disabled></td><td><input type="radio" name="help_edu" value="3" disabled></td><td><input type="radio" name="help_edu" value="2" disabled></td><td><input type="radio" name="help_edu" value="1" disabled></td></tr>
+                <tr class="q3-row q3-inactive" data-category="진로·미래 준비"><td>진로·미래 준비</td><td><input type="radio" name="help_career" value="4" disabled></td><td><input type="radio" name="help_career" value="3" disabled></td><td><input type="radio" name="help_career" value="2" disabled></td><td><input type="radio" name="help_career" value="1" disabled></td></tr>
+                <tr class="q3-row q3-inactive" data-category="생활 안정"><td>생활 안정</td><td><input type="radio" name="help_living" value="4" disabled></td><td><input type="radio" name="help_living" value="3" disabled></td><td><input type="radio" name="help_living" value="2" disabled></td><td><input type="radio" name="help_living" value="1" disabled></td></tr>
+                <tr class="q3-row q3-inactive" data-category="기타"><td>기타</td><td><input type="radio" name="help_etc" value="4" disabled></td><td><input type="radio" name="help_etc" value="3" disabled></td><td><input type="radio" name="help_etc" value="2" disabled></td><td><input type="radio" name="help_etc" value="1" disabled></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q4 기억에 남는 것 -->
+      <div class="card">
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">4</span><span>가장 기억에 남거나 좋았던 사용 항목은 무엇인가요?</span></div>
+          <div class="rank-list">
+            <div class="rank-item">
+              <div class="rank-badge">1위</div>
+              <div class="rank-inputs">
+                <input type="text" name="best_1_item" placeholder="품목 (예: 운동화 구입)">
+                <input type="text" name="best_1_reason" placeholder="이유">
+              </div>
+            </div>
+            <div class="rank-item">
+              <div class="rank-badge">2위</div>
+              <div class="rank-inputs">
+                <input type="text" name="best_2_item" placeholder="품목">
+                <input type="text" name="best_2_reason" placeholder="이유">
+              </div>
+            </div>
+            <div class="rank-item">
+              <div class="rank-badge">3위</div>
+              <div class="rank-inputs">
+                <input type="text" name="best_3_item" placeholder="품목">
+                <input type="text" name="best_3_reason" placeholder="이유">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /사용함 섹션 -->
+
+    <!-- ===== 미사용 섹션 ===== -->
+    <div class="section-block" id="sectionNotUsed">
+      <div class="card">
+        <div class="section-label">미사용 사유</div>
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">5</span><span>자기돌봄비를 사용하지 않은 이유는 무엇인가요?</span></div>
+          <div class="options-list" id="q5Options">
+            <label class="opt-item" onclick="selectOpt(this, 'q5')"><input type="radio" name="q5" value="시간부족"><span class="opt-text">시간이 부족했어요 <span class="opt-sub">(공부·가족돌봄 등)</span></span></label>
+            <label class="opt-item" onclick="selectOpt(this, 'q5')"><input type="radio" name="q5" value="어디쓸지모름"><span class="opt-text">어디에 쓸지 몰랐어요</span></label>
+            <label class="opt-item" onclick="selectOpt(this, 'q5')"><input type="radio" name="q5" value="방법어려움"><span class="opt-text">사용 방법이 어려웠어요</span></label>
+            <label class="opt-item" onclick="selectOpt(this, 'q5')"><input type="radio" name="q5" value="몸마음힘듦"><span class="opt-text">몸이나 마음이 힘들었어요</span></label>
+            <label class="opt-item" onclick="selectOpt(this, 'q5')"><input type="radio" name="q5" value="아껴두고싶음"><span class="opt-text">아껴두고 싶었어요</span></label>
+            <label class="opt-item" onclick="selectOpt(this, 'q5')">
+              <input type="radio" name="q5" value="기타">
+              <span class="opt-text">기타
+                <div class="opt-inline-input" id="q5EtcWrap">
+                  <input type="text" name="q5_etc" placeholder="기타 사유 (50자 이내)" maxlength="50">
+                </div>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /미사용 섹션 -->
+
+    <!-- ===== 공통 문항 ===== -->
+    <div class="section-block always-visible" id="sectionCommon" style="display:none">
+
+      <!-- Q6 향후 사용 계획 -->
+      <div class="card">
+        <div class="section-label">향후 계획</div>
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">6</span><span>앞으로 2개월 동안 자기돌봄비를 어디에 쓰고 싶나요?<br><small style="font-weight:400;font-size:13px;color:var(--text-3)">(최대 3가지 선택)</small></span></div>
+          <div class="options-list">
+            <label class="opt-item"><input type="checkbox" name="q6" value="휴식·여가"><span class="opt-text">휴식·여가 <span class="opt-sub">여행, 문화활동, 취미, 쉼 등</span></span></label>
+            <label class="opt-item"><input type="checkbox" name="q6" value="신체건강"><span class="opt-text">신체 건강 <span class="opt-sub">운동, 병·의원 이용, 건강관리 등</span></span></label>
+            <label class="opt-item"><input type="checkbox" name="q6" value="마음건강"><span class="opt-text">마음 건강 <span class="opt-sub">상담, 심리치유, 마음 돌봄 활동 등</span></span></label>
+            <label class="opt-item"><input type="checkbox" name="q6" value="사회관계"><span class="opt-text">사회관계 <span class="opt-sub">친구·지인과의 만남, 관계 회복 활동 등</span></span></label>
+            <label class="opt-item"><input type="checkbox" name="q6" value="학업교육"><span class="opt-text">학업·교육 <span class="opt-sub">학업 이수, 자격증, 교육 프로그램 등</span></span></label>
+            <label class="opt-item"><input type="checkbox" name="q6" value="진로미래준비"><span class="opt-text">진로·미래 준비 <span class="opt-sub">취업 준비, 자기계발 등</span></span></label>
+            <label class="opt-item"><input type="checkbox" name="q6" value="생활안정"><span class="opt-text">생활 안정 <span class="opt-sub">생활비 보완, 주거·생계 관련 사용 등</span></span></label>
+            <label class="opt-item">
+              <input type="checkbox" name="q6" value="기타" id="q6EtcChk">
+              <span class="opt-text">기타
+                <div class="opt-inline-input" id="q6EtcWrap"><input type="text" name="q6_etc" placeholder="기타 내용 (50자 이내)" maxlength="50"></div>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q7 자기돌봄 시간 변화 -->
+      <div class="card">
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">7</span><span>최근 2개월 동안 나를 위해 쓰는 시간에 변화가 있었나요?</span></div>
+          <div class="options-list" id="q7Options">
+            <label class="opt-item" onclick="selectOpt(this, 'q7')">
+              <input type="radio" name="q7" value="늘었음">
+              <span class="opt-text">나를 위한 시간이 늘었어요
+                <div class="opt-inline-input" id="q7IncWrap"><input type="text" name="q7_inc_reason" placeholder="달라진 이유를 적어주세요" maxlength="100"></div>
+              </span>
+            </label>
+            <label class="opt-item" onclick="selectOpt(this, 'q7')">
+              <input type="radio" name="q7" value="줄었음">
+              <span class="opt-text">나를 위한 시간이 줄었어요
+                <div class="opt-inline-input" id="q7DecWrap"><input type="text" name="q7_dec_reason" placeholder="달라진 이유를 적어주세요" maxlength="100"></div>
+              </span>
+            </label>
+            <label class="opt-item" onclick="selectOpt(this, 'q7')"><input type="radio" name="q7" value="비슷함"><span class="opt-text">나를 위한 시간이 비슷해요</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q8 마음 상태 -->
+      <div class="card">
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">8</span><span>요즘 나의 마음 상태와 가장 가까운 번호를 골라주세요.</span></div>
+          <div style="overflow-x:auto">
+            <table class="likert-table">
+              <thead>
+                <tr>
+                  <th>문항</th>
+                  <th>매우 그렇다</th>
+                  <th>그렇다</th>
+                  <th>그렇지 않다</th>
+                  <th>매우 그렇지 않다</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>8-1. 돈 걱정이 줄어 마음이 편해졌다</td><td><input type="radio" name="q8_1" value="4"></td><td><input type="radio" name="q8_1" value="3"></td><td><input type="radio" name="q8_1" value="2"></td><td><input type="radio" name="q8_1" value="1"></td></tr>
+                <tr><td>8-2. 예전보다 심리적으로 안정감을 느낀다</td><td><input type="radio" name="q8_2" value="4"></td><td><input type="radio" name="q8_2" value="3"></td><td><input type="radio" name="q8_2" value="2"></td><td><input type="radio" name="q8_2" value="1"></td></tr>
+                <tr><td>8-3. 새로운 일을 해볼 용기가 생겼다</td><td><input type="radio" name="q8_3" value="4"></td><td><input type="radio" name="q8_3" value="3"></td><td><input type="radio" name="q8_3" value="2"></td><td><input type="radio" name="q8_3" value="1"></td></tr>
+                <tr><td>8-4. 나의 미래에 대해 더 생각하게 됐다</td><td><input type="radio" name="q8_4" value="4"></td><td><input type="radio" name="q8_4" value="3"></td><td><input type="radio" name="q8_4" value="2"></td><td><input type="radio" name="q8_4" value="1"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q9 가족 돌봄 변화 -->
+      <div class="card">
+        <div class="section-label">가족 돌봄</div>
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">9</span><span>최근 2개월 동안 가족 돌봄과 관련해서 변화가 있었나요?<br><small style="font-weight:400;font-size:13px;color:var(--text-3)">(최대 3가지 선택)</small></span></div>
+          <div class="options-list">
+            <label class="opt-item"><input type="checkbox" name="q9" value="혼자다하려는마음감소"><span class="opt-text">가족 돌보는 일을 나 혼자 다 하려는 마음이 줄어들었다</span></label>
+            <label class="opt-item"><input type="checkbox" name="q9" value="도움요청"><span class="opt-text">복지기관이나 주변 지인에게 도움을 요청해볼까 생각하거나 실제로 요청했다</span></label>
+            <label class="opt-item"><input type="checkbox" name="q9" value="내감정살핌"><span class="opt-text">가족을 돌보는 중에도 내 감정이나 건강을 살피게 되었다</span></label>
+            <label class="opt-item"><input type="checkbox" name="q9" value="이야기늘음"><span class="opt-text">내 힘든 점이나 상황을 다른 사람에게 이야기하는 일이 늘었다</span></label>
+            <label class="opt-item"><input type="checkbox" name="q9" value="변화없음"><span class="opt-text">특별한 변화는 없었다</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q10 복지자원 -->
+      <div class="card">
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">10</span><span>최근 2개월 동안 우리 가족이 새롭게 이용하게 된 복지자원이 있나요?</span></div>
+          <p class="q-desc">※ 이 질문은 연구를 위한 확인 질문이며 지원 선정이나 지급에는 영향이 없습니다.</p>
+          <div class="options-list" id="q10Options">
+            <label class="opt-item" onclick="selectOpt(this,'q10')">
+              <input type="radio" name="q10" value="있음">
+              <span class="opt-text">있음
+                <div class="opt-inline-input" id="q10YesWrap" style="display:flex;gap:8px;flex-wrap:wrap">
+                  <input type="text" name="q10_org" placeholder="지원기관" style="flex:1;min-width:120px">
+                  <input type="text" name="q10_content" placeholder="지원내용" style="flex:2;min-width:160px">
+                </div>
+              </span>
+            </label>
+            <label class="opt-item" onclick="selectOpt(this,'q10')"><input type="radio" name="q10" value="없음"><span class="opt-text">없음</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q11 추가 도움 필요 -->
+      <div class="card">
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">11</span><span>가족 돌봄과 관련해서 어떤 안내나 도움이 더 필요한가요?<br><small style="font-weight:400;font-size:13px;color:var(--text-3)">(최대 3가지 선택)</small></span></div>
+          <div class="options-list">
+            <label class="opt-item"><input type="checkbox" name="q11" value="생활비지원"><span class="opt-text">생활비 지원 (돈이 필요해요)</span></label>
+            <label class="opt-item"><input type="checkbox" name="q11" value="주거지원"><span class="opt-text">집(주거) 지원</span></label>
+            <label class="opt-item"><input type="checkbox" name="q11" value="돌봄도움"><span class="opt-text">돌봄 도움 (집안일, 간병 등)</span></label>
+            <label class="opt-item"><input type="checkbox" name="q11" value="병원치료"><span class="opt-text">병원·치료 도움</span></label>
+            <label class="opt-item"><input type="checkbox" name="q11" value="금융도움"><span class="opt-text">돈 관리·대출 등 금융 도움</span></label>
+            <label class="opt-item"><input type="checkbox" name="q11" value="교육지원"><span class="opt-text">공부(교육) 지원</span></label>
+            <label class="opt-item"><input type="checkbox" name="q11" value="취업도움"><span class="opt-text">일자리(취업) 도움</span></label>
+            <label class="opt-item"><input type="checkbox" name="q11" value="마음상담"><span class="opt-text">마음 상담 지원 (위로, 이야기 나눔 등)</span></label>
+            <label class="opt-item"><input type="checkbox" name="q11" value="문화여가"><span class="opt-text">문화·여가 활동 지원</span></label>
+            <label class="opt-item"><input type="checkbox" name="q11" value="행정도움"><span class="opt-text">서류·신청 등 행정 도움</span></label>
+            <label class="opt-item"><input type="checkbox" name="q11" value="필요없음"><span class="opt-text">필요 없어요</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q12 긴급 상담 -->
+      <div class="card">
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">12</span><span>가족 상황이 갑자기 변해서 상담이 필요하면 체크해 주세요.</span></div>
+          <div class="options-list" id="q12Options">
+            <label class="opt-item" onclick="selectOpt(this,'q12')"><input type="radio" name="q12" value="필요함"><span class="opt-text">필요함</span></label>
+            <label class="opt-item" onclick="selectOpt(this,'q12')"><input type="radio" name="q12" value="필요하지않음"><span class="opt-text">필요하지 않음</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q13 카드내역서 파일 업로드 -->
+      <div class="card">
+        <div class="q-block">
+          <div class="q-title"><span class="q-num">13</span><span>카드내역서를 업로드해 주세요<span class="required">*</span></span></div>
+          <p class="q-desc">PDF, JPG, PNG, Excel 파일 가능 · 최대 10MB · 여러 파일 동시 선택 가능</p>
+
+          <!-- 드래그앤드롭 업로드 존 -->
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="cardFileInput" name="card_files" multiple
+              accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,image/*" style="display:none">
+            <div class="upload-icon">📎</div>
+            <div class="upload-main">파일을 여기로 드래그하거나</div>
+            <button type="button" class="upload-browse-btn" onclick="document.getElementById('cardFileInput').click()">
+              파일 선택하기
+            </button>
+            <div class="upload-hint">PDF · JPG · PNG · Excel(.xlsx/.xls/.csv) · 최대 10MB</div>
+          </div>
+
+          <!-- 선택된 파일 목록 -->
+          <div class="file-list" id="fileList"></div>
+
+          <!-- 업로드 진행 상태 -->
+          <div class="upload-status" id="uploadStatus" style="display:none">
+            <div class="upload-progress-bar"><div class="upload-progress-fill" id="uploadProgressFill"></div></div>
+            <div class="upload-status-text" id="uploadStatusText">업로드 중...</div>
+          </div>
+
+          <div class="notice-box" style="margin-top:14px">⚠️ <strong>카드내역서를 제출하지 않을 경우, 자기돌봄비 지급이 제한됩니다.</strong><br>업로드된 파일은 구글 드라이브에 안전하게 보관됩니다.</div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /공통 문항 -->
+
+    <!-- Submit -->
+    <div class="submit-wrap" id="submitWrap" style="display:none">
+      <button type="submit" class="submit-btn" id="submitBtn">제출하기</button>
+      <p class="submit-note">제출 후 수정코드를 받으면 언제든지 내용을 수정할 수 있습니다.</p>
+    </div>
+
+    <!-- Success -->
+    <div class="success-page" id="successPage">
+      <div class="success-icon">✅</div>
+      <h2>제출이 완료되었습니다!</h2>
+      <p>돌봄기록서가 성공적으로 접수되었습니다.<br>담당자가 확인 후 연락드릴 예정입니다.</p>
+
+      <!-- 수정 코드 안내 박스 -->
+      <div class="edit-code-box" id="editCodeBox">
+        <div class="edit-code-label">✏️ 수정 코드 (반드시 저장해 두세요)</div>
+        <div class="edit-code-value" id="editCodeDisplay">-</div>
+        <button type="button" class="copy-code-btn" onclick="copyEditCode()">코드 복사하기</button>
+        <p class="edit-code-note">이 코드로 언제든지 제출한 내용을 불러와 수정할 수 있습니다.<br>분실 시 재발급이 불가하니 꼭 메모해 두세요.</p>
+      </div>
+
+      <div style="margin-top:20px">
+        <button type="button" class="edit-load-btn" onclick="loadForEdit()">✏️ 지금 바로 수정하기</button>
+      </div>
+    </div>
+
+    <!-- 수정 코드 입력 화면 -->
+    <div class="edit-entry-page" id="editEntryPage">
+      <div class="edit-entry-inner">
+        <div class="success-icon">✏️</div>
+        <h2>제출 내용 수정</h2>
+        <p style="font-size:14px;color:var(--text-2);margin:10px 0 20px">제출 시 받은 수정 코드를 입력해 주세요.</p>
+        <input type="text" id="editCodeInput" placeholder="수정 코드 입력 (예: ABC-12345)" 
+          style="width:100%;border:2px solid var(--border);border-radius:10px;padding:13px 16px;font-size:15px;font-family:inherit;outline:none;text-align:center;letter-spacing:2px;margin-bottom:12px">
+        <button type="button" class="submit-btn" style="width:100%" onclick="fetchByEditCode()">불러오기</button>
+        <p id="editCodeError" style="color:var(--accent);font-size:13px;margin-top:10px;display:none">코드를 찾을 수 없습니다. 다시 확인해 주세요.</p>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CONFIG =====
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmicom9Ee5XW2arzNzBgelRz64dQzIMw7po470OYlQ1d22dy0SyAh9b1i7jiwTjcqWvw/exec';
+const FILE_UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbwD8LEm88QyJ_XO0LFAv-HWsRR58zia85adjglxtFbCq0PXKQM6Iu9L5ND3kaXRVZ4z/exec';
+// ==================
+
+let usageRowCount = 1;
+let selectedFiles = [];
+let currentEditCode = null;  // 현재 수정 중인 코드 (null = 신규 제출)
+let isEditMode = false;
+
+// ===== 수정 코드 생성 =====
+function generateEditCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 3; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  code += '-';
+  for (let i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+function copyEditCode() {
+  const code = document.getElementById('editCodeDisplay').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    showToast('✅ 코드가 복사되었습니다!', 'success');
+  });
+}
+
+// ===== 수정 코드 입력 화면 전환 =====
+function showEditEntry() {
+  document.getElementById('mainForm').style.display = 'none';
+  document.getElementById('editEntryPage').classList.add('show');
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('progressPct').textContent = '0%';
+}
+
+function hideEditEntry() {
+  document.getElementById('editEntryPage').classList.remove('show');
+  document.getElementById('mainForm').style.display = 'block';
+}
+
+// ===== 수정코드로 데이터 불러오기 =====
+async function fetchByEditCode() {
+  const code = document.getElementById('editCodeInput').value.trim().toUpperCase();
+  const errEl = document.getElementById('editCodeError');
+  errEl.style.display = 'none';
+
+  if (!code) { errEl.textContent = '수정 코드를 입력해 주세요.'; errEl.style.display = 'block'; return; }
+
+  const btn = document.querySelector('#editEntryPage .submit-btn');
+  btn.textContent = '불러오는 중...';
+  btn.disabled = true;
+
+  try {
+    if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+      // 테스트 모드: 로컬 스토리지에서 불러오기
+      const saved = localStorage.getItem('form_' + code);
+      if (!saved) throw new Error('not found');
+      const data = JSON.parse(saved);
+      hideEditEntry();
+      fillFormWithData(data);
+      enterEditMode(code);
+    } else {
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=get&editCode=${encodeURIComponent(code)}`);
+      const json = await res.json();
+      if (!json.data) throw new Error('not found');
+      hideEditEntry();
+      fillFormWithData(json.data);
+      enterEditMode(code);
+    }
+  } catch(e) {
+    errEl.textContent = '코드를 찾을 수 없습니다. 다시 확인해 주세요.';
+    errEl.style.display = 'block';
+    btn.textContent = '불러오기';
+    btn.disabled = false;
+  }
+}
+
+function enterEditMode(code) {
+  isEditMode = true;
+  currentEditCode = code;
+  document.getElementById('editModeBanner').classList.add('show');
+  document.getElementById('editModeCode').textContent = code;
+  document.getElementById('submitBtn').textContent = '수정 내용 저장하기';
+  document.getElementById('submitWrap').style.display = 'block';
+  showToast(`✅ ${code} 내용을 불러왔습니다.`, 'success');
+}
+
+// ===== 폼에 데이터 채우기 =====
+function fillFormWithData(data) {
+  // 기본 정보
+  const setVal = (name, val) => {
+    const el = document.querySelector(`[name="${name}"]`);
+    if (el) el.value = val || '';
+  };
+  ['name','district'].forEach(k => setVal(k, data[k]));
+
+  // Q1 라디오 → 분기 트리거
+  const q1Radio = document.querySelector(`input[name="q1"][value="${data.q1}"]`);
+  if (q1Radio) {
+    q1Radio.checked = true;
+    q1Radio.dispatchEvent(new Event('change', { bubbles: true }));
+    q1Radio.closest('.opt-item')?.classList.add('selected');
+  }
+
+  // Q2 사용내역
+  if (data.usage_rows) {
+    try {
+      const rows = JSON.parse(data.usage_rows);
+      const tbody = document.getElementById('usageBody');
+      tbody.innerHTML = '';
+      usageRowCount = 0;
+      rows.forEach((row, idx) => {
+        usageRowCount++;
+        const n = usageRowCount;
+        var isFirst = idx === 0;
+        var tr = document.createElement('tr');
+        tr.id = 'usage_row_' + n;
+        var categories2 = ['휴식·여가','신체 건강','마음 건강','사회관계','학업·교육','진로·미래 준비','생활 안정','기타'];
+        var opts2 = '<option value="">-- 선택 --</option>' + categories2.map(function(c){
+          return '<option' + (c === row.category ? ' selected' : '') + '>' + c + '</option>';
+        }).join('');
+        var delBtn = isFirst ? '' : '<button type="button" class="del-row-btn" onclick="delRow(' + n + ')">✕</button>';
+        tr.innerHTML = ''
+          + '<td style="text-align:center;font-size:12px;color:var(--text-3)">' + n + '</td>'
+          + '<td><input type="date" name="use_date_' + n + '" value="' + (row.date||'') + '"></td>'
+          + '<td><input type="text" name="use_place_' + n + '" placeholder="사용처 입력" value="' + (row.place||'') + '"></td>'
+          + '<td><input type="number" name="use_amount_' + n + '" placeholder="0" min="0" value="' + (row.amount||'') + '"></td>'
+          + '<td><select name="use_category_' + n + '">' + opts2 + '</select></td>'
+          + '<td>' + delBtn + '</td>';
+        tbody.appendChild(tr);
+      });
+    } catch(e) {}
+  }
+
+  // Q3 Likert
+  const helpKeys = ['leisure','body','mind','social','edu','career','living','etc'];
+  helpKeys.forEach(k => {
+    const v = data[`help_${k}`];
+    if (v) {
+      const r = document.querySelector(`input[name="help_${k}"][value="${v}"]`);
+      if (r) r.checked = true;
+    }
+  });
+
+  // Q4 순위
+  [1,2,3].forEach(n => {
+    setVal(`best_${n}_item`, data[`best_${n}_item`]);
+    setVal(`best_${n}_reason`, data[`best_${n}_reason`]);
+  });
+
+  // Q5 라디오
+  setRadio('q5', data.q5);
+  if (data.q5 === '기타') {
+    document.getElementById('q5EtcWrap').classList.add('show');
+    setVal('q5_etc', data.q5_etc);
+  }
+
+  // Q6 체크박스
+  if (data.q6) {
+    data.q6.split(', ').forEach(v => {
+      const chk = document.querySelector(`input[name="q6"][value="${v}"]`);
+      if (chk) { chk.checked = true; chk.closest('.opt-item')?.classList.add('selected'); }
+    });
+    if (data.q6.includes('기타')) {
+      document.getElementById('q6EtcWrap').classList.add('show');
+      setVal('q6_etc', data.q6_etc);
+    }
+  }
+
+  // Q7
+  setRadio('q7', data.q7);
+  if (data.q7 === '늘었음') { document.getElementById('q7IncWrap').classList.add('show'); setVal('q7_inc_reason', data.q7_inc_reason); }
+  if (data.q7 === '줄었음') { document.getElementById('q7DecWrap').classList.add('show'); setVal('q7_dec_reason', data.q7_dec_reason); }
+
+  // Q8
+  [1,2,3,4].forEach(n => {
+    const v = data[`q8_${n}`];
+    if (v) { const r = document.querySelector(`input[name="q8_${n}"][value="${v}"]`); if(r) r.checked = true; }
+  });
+
+  // Q9 체크박스
+  if (data.q9) {
+    data.q9.split(', ').forEach(v => {
+      const chk = document.querySelector(`input[name="q9"][value="${v}"]`);
+      if (chk) { chk.checked = true; chk.closest('.opt-item')?.classList.add('selected'); }
+    });
+  }
+
+  // Q10
+  setRadio('q10', data.q10);
+  if (data.q10 === '있음') {
+    document.getElementById('q10YesWrap').classList.add('show');
+    setVal('q10_org', data.q10_org);
+    setVal('q10_content', data.q10_content);
+  }
+
+  // Q11 체크박스
+  if (data.q11) {
+    data.q11.split(', ').forEach(v => {
+      const chk = document.querySelector(`input[name="q11"][value="${v}"]`);
+      if (chk) { chk.checked = true; chk.closest('.opt-item')?.classList.add('selected'); }
+    });
+  }
+
+  // Q12
+  setRadio('q12', data.q12);
+
+  // Q13 기존 파일 표시
+  if (data.q13_files) {
+    const names = data.q13_files.split(', ');
+    const urls = data.q13_drive_urls ? data.q13_drive_urls.split(', ') : [];
+    fileList.innerHTML = names.map((name, i) => `
+      <div class="file-item done">
+        <span class="file-icon">📄</span>
+        <div class="file-info">
+          <div class="file-name">${name}</div>
+          <div class="file-size">${urls[i] ? `<a href="${urls[i]}" target="_blank" style="color:var(--primary);font-size:11px">드라이브에서 보기</a>` : '기존 업로드 파일'}</div>
+        </div>
+        <span class="file-status done">✅ 기존 파일</span>
+      </div>
+    `).join('');
+    uploadZone.classList.add('has-files');
+  }
+
+  syncQ3WithQ2();
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setRadio(name, value) {
+  if (!value) return;
+  const r = document.querySelector(`input[name="${name}"][value="${value}"]`);
+  if (r) { r.checked = true; r.closest('.opt-item')?.classList.add('selected'); }
+}
+
+// 수정 후 바로 수정하기 버튼 (성공 화면에서)
+function loadForEdit() {
+  const code = document.getElementById('editCodeDisplay').textContent;
+  document.getElementById('successPage').style.display = 'none';
+  document.getElementById('mainForm').style.display = 'block';
+  document.getElementById('editCodeInput').value = code;
+  fetchByEditCode();
+}
+
+// ===== 파일 업로드 UI =====
+const uploadZone = document.getElementById('uploadZone');
+const cardFileInput = document.getElementById('cardFileInput');
+const fileList = document.getElementById('fileList');
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  handleFiles(Array.from(e.dataTransfer.files));
+});
+uploadZone.addEventListener('click', e => {
+  if (e.target.classList.contains('upload-browse-btn')) return;
+  cardFileInput.click();
+});
+cardFileInput.addEventListener('change', function() {
+  handleFiles(Array.from(this.files));
+  this.value = '';
+});
+
+function getFileIcon(name) {
+  const ext = name.split('.').pop().toLowerCase();
+  if (['jpg','jpeg','png','gif','webp'].includes(ext)) return '🖼️';
+  if (ext === 'pdf') return '📄';
+  if (['xlsx','xls','csv'].includes(ext)) return '📊';
+  return '📎';
+}
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + 'B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + 'KB';
+  return (bytes/(1024*1024)).toFixed(1) + 'MB';
+}
+function handleFiles(files) {
+  var allowed = ['pdf','jpg','jpeg','png','gif','webp','xlsx','xls','csv','xlsm','xltx'];
+  files.forEach(function(file) {
+    var ext = file.name.split('.').pop().toLowerCase();
+    if (!allowed.includes(ext)) {
+      showToast(file.name + ': 지원하지 않는 파일 형식입니다.', 'error'); return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast(file.name + ': 파일이 10MB를 초과합니다.', 'error'); return;
+    }
+    if (selectedFiles.find(function(f){ return f.file.name === file.name && f.file.size === file.size; })) return;
+    selectedFiles.push({ file: file, status: 'pending', driveUrl: '' });
+  });
+  renderFileList();
+  if (selectedFiles.length > 0) uploadZone.classList.add('has-files');
+}
+function renderFileList() {
+  const existingItems = fileList.querySelectorAll('.file-item.done[data-existing]');
+  const existingHtml = Array.from(existingItems).map(function(el) { return el.outerHTML; }).join('');
+
+  const newHtml = selectedFiles.map(function(item, idx) {
+    var icon = getFileIcon(item.file.name);
+    var name = item.file.name;
+    var size = formatSize(item.file.size);
+    var statusLabel = item.status === 'done' ? '✅ 완료' : item.status === 'error' ? '❌ 실패' : '⏳ 대기';
+    var removeBtn = item.status === 'pending'
+      ? '<button type="button" class="file-remove" onclick="removeFile(' + idx + ')">✕</button>'
+      : '';
+    return '<div class="file-item ' + item.status + '">'
+      + '<span class="file-icon">' + icon + '</span>'
+      + '<div class="file-info">'
+      + '<div class="file-name">' + name + '</div>'
+      + '<div class="file-size">' + size + '</div>'
+      + '</div>'
+      + '<span class="file-status ' + item.status + '">' + statusLabel + '</span>'
+      + removeBtn
+      + '</div>';
+  }).join('');
+  fileList.innerHTML = existingHtml + newHtml;
+}
+function removeFile(idx) {
+  selectedFiles.splice(idx, 1);
+  renderFileList();
+  if (selectedFiles.length === 0 && !fileList.querySelector('[data-existing]')) uploadZone.classList.remove('has-files');
+}
+
+function retryFile(idx) {
+  selectedFiles[idx].status = 'pending';
+  renderFileList();
+}
+
+function renderFileListWithRetry() {
+  const existingItems = fileList.querySelectorAll('.file-item.done[data-existing]');
+  const existingHtml = Array.from(existingItems).map(function(el) { return el.outerHTML; }).join('');
+  const newHtml = selectedFiles.map(function(item, idx) {
+    var icon = getFileIcon(item.file.name);
+    var size = formatSize(item.file.size);
+    var statusLabel, actionBtn;
+    if (item.status === 'done') {
+      statusLabel = '<span class="file-status done">✅ 완료</span>';
+      actionBtn = '';
+    } else if (item.status === 'error') {
+      statusLabel = '<span class="file-status error">❌ 실패</span>';
+      actionBtn = '<button type="button" class="retry-btn" onclick="retryFile(' + idx + ')">🔄 재시도</button>';
+    } else {
+      statusLabel = '<span class="file-status pending">⏳ 대기</span>';
+      actionBtn = '<button type="button" class="file-remove" onclick="removeFile(' + idx + ')">✕</button>';
+    }
+    return '<div class="file-item ' + item.status + '">'
+      + '<span class="file-icon">' + icon + '</span>'
+      + '<div class="file-info">'
+      + '<div class="file-name">' + item.file.name + '</div>'
+      + '<div class="file-size">' + size + '</div>'
+      + '</div>'
+      + statusLabel
+      + actionBtn
+      + '</div>';
+  }).join('');
+  fileList.innerHTML = existingHtml + newHtml;
+}
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = () => res(reader.result.split(',')[1]);
+    reader.onerror = rej;
+    reader.readAsDataURL(file);
+  });
+}
+async function uploadFilesToDrive(respondentName, period) {
+  if (selectedFiles.length === 0) return [];
+  const statusDiv = document.getElementById('uploadStatus');
+  const fillBar = document.getElementById('uploadProgressFill');
+  const statusText = document.getElementById('uploadStatusText');
+  statusDiv.style.display = 'block';
+  const driveUrls = [];
+  // pending 상태 파일만 업로드 (done은 건너뜀)
+  const pendingFiles = selectedFiles.filter(f => f.status !== 'done');
+  if (pendingFiles.length === 0) {
+    fillBar.style.width = '100%';
+    statusText.textContent = '모든 파일 업로드 완료';
+    return selectedFiles.map(f => f.driveUrl);
+  }
+
+  for (let i = 0; i < selectedFiles.length; i++) {
+    const item = selectedFiles[i];
+    if (item.status === 'done') continue; // 이미 완료된 파일 건너뜀
+    statusText.textContent = `파일 업로드 중 (${i+1}/${selectedFiles.length}): ${item.file.name}`;
+    fillBar.style.width = `${Math.round((i / selectedFiles.length) * 100)}%`;
+    try {
+      if (FILE_UPLOAD_URL === 'YOUR_FILE_UPLOAD_SCRIPT_URL_HERE') {
+        await new Promise(r => setTimeout(r, 500));
+        item.status = 'done';
+        item.driveUrl = 'https://drive.google.com/test';
+      } else {
+        const base64 = await fileToBase64(item.file);
+        const params = new URLSearchParams();
+        params.append('fileName', '[' + respondentName + '_' + period + '] ' + item.file.name);
+        params.append('mimeType', item.file.type || 'application/octet-stream');
+        params.append('base64Data', base64);
+        // no-cors로 전송 (CORS 우회) - 응답을 읽을 수 없으므로 성공으로 간주
+        await fetch(FILE_UPLOAD_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString()
+        });
+        item.status = 'done';
+        item.driveUrl = FILE_UPLOAD_URL + '?file=' + encodeURIComponent(item.file.name);
+      }
+      driveUrls.push(item.driveUrl);
+    } catch(err) { item.status = 'error'; }
+    renderFileList();
+  }
+  fillBar.style.width = '100%';
+  statusText.textContent = `완료 (${selectedFiles.filter(f=>f.status==='done').length}/${selectedFiles.length}개)`;
+  return driveUrls;
+}
+
+// ===== Q3 연동: Q2 사용분야 변경 시 Q3 행 활성화 =====
+function syncQ3WithQ2() {
+  var selected = new Set();
+  document.querySelectorAll('select[name^="use_category"]').forEach(function(sel) {
+    if (sel.value) selected.add(sel.value);
+  });
+  document.querySelectorAll('.q3-row').forEach(function(row) {
+    var cat = row.getAttribute('data-category');
+    var isActive = selected.has(cat);
+    row.classList.toggle('q3-active', isActive);
+    row.classList.toggle('q3-inactive', !isActive);
+    row.querySelectorAll('input[type="radio"]').forEach(function(r) {
+      r.disabled = !isActive;
+      if (!isActive) r.checked = false;
+    });
+  });
+}
+
+// usageBody 변경 감지 (delegated)
+document.getElementById('usageBody').addEventListener('change', function(e) {
+  if (e.target && e.target.name && e.target.name.startsWith('use_category')) {
+    syncQ3WithQ2();
+  }
+});
+
+// ===== Q1 분기 =====
+document.querySelectorAll('input[name="q1"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    const used = this.value === '사용함';
+    document.getElementById('sectionUsed').classList.toggle('visible', used);
+    document.getElementById('sectionNotUsed').classList.toggle('visible', !used);
+    document.getElementById('sectionCommon').style.display = 'block';
+    document.getElementById('submitWrap').style.display = 'block';
+    updateProgress();
+  });
+});
+document.querySelectorAll('input[name="q5"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    document.getElementById('q5EtcWrap').classList.toggle('show', this.value === '기타');
+  });
+});
+document.getElementById('q6EtcChk').addEventListener('change', function() {
+  document.getElementById('q6EtcWrap').classList.toggle('show', this.checked);
+});
+document.querySelectorAll('input[name="q7"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    document.getElementById('q7IncWrap').classList.toggle('show', this.value === '늘었음');
+    document.getElementById('q7DecWrap').classList.toggle('show', this.value === '줄었음');
+  });
+});
+document.querySelectorAll('input[name="q10"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    document.getElementById('q10YesWrap').classList.toggle('show', this.value === '있음');
+  });
+});
+
+function selectOpt(el, group) {
+  const radioName = el.querySelector('input[type="radio"]')?.name;
+  if (radioName) {
+    document.querySelectorAll(`input[name="${radioName}"]`).forEach(r => r.closest('.opt-item')?.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+}
+document.querySelectorAll('.opt-item input[type="checkbox"]').forEach(chk => {
+  chk.addEventListener('change', function() {
+    const name = this.name;
+    const limited = ['q6', 'q9', 'q11']; // 최대 3개 제한 그룹
+    if (limited.includes(name) && this.checked) {
+      const checkedCount = document.querySelectorAll('input[name="' + name + '"]:checked').length;
+      if (checkedCount > 3) {
+        this.checked = false;
+        showToast('최대 3가지까지만 선택할 수 있습니다.', 'error');
+        return;
+      }
+    }
+    this.closest('.opt-item').classList.toggle('selected', this.checked);
+    // 3개 초과 시 나머지 비활성화
+    if (limited.includes(name)) {
+      const checkedNow = document.querySelectorAll('input[name="' + name + '"]:checked').length;
+      document.querySelectorAll('input[name="' + name + '"]').forEach(function(c) {
+        if (!c.checked) {
+          c.closest('.opt-item').style.opacity = checkedNow >= 3 ? '0.4' : '1';
+          c.closest('.opt-item').style.pointerEvents = checkedNow >= 3 ? 'none' : 'auto';
+        }
+      });
+    }
+    updateProgress();
+  });
+});
+
+function addUsageRow() {
+  usageRowCount++;
+  var n = usageRowCount;
+  var tbody = document.getElementById('usageBody');
+  var tr = document.createElement('tr');
+  tr.id = 'usage_row_' + n;
+  var categories = ['휴식·여가','신체 건강','마음 건강','사회관계','학업·교육','진로·미래 준비','생활 안정','기타'];
+  var opts = '<option value="">-- 선택 --</option>' + categories.map(function(c){ return '<option>' + c + '</option>'; }).join('');
+  tr.innerHTML = ''
+    + '<td style="text-align:center;font-size:12px;color:var(--text-3)">' + n + '</td>'
+    + '<td><input type="date" name="use_date_' + n + '"></td>'
+    + '<td><input type="text" name="use_place_' + n + '" placeholder="사용처 입력"></td>'
+    + '<td><input type="number" name="use_amount_' + n + '" placeholder="0" min="0"></td>'
+    + '<td><select name="use_category_' + n + '">' + opts + '</select></td>'
+    + '<td><button type="button" class="del-row-btn" onclick="delRow(' + n + ')">✕</button></td>';
+  tbody.appendChild(tr);
+}
+function delRow(n) {
+  const row = document.getElementById(`usage_row_${n}`);
+  if (row) row.remove();
+}
+
+function updateProgress() {
+  const q1checked = document.querySelector('input[name="q1"]:checked');
+  if (!q1checked) {
+    // Q1 미선택 - 기본정보만 체크
+    const name = document.querySelector('input[name="name"]').value.trim();
+    const dist = document.querySelector('input[name="district"]').value.trim();
+    const filled = (name ? 1 : 0) + (dist ? 1 : 0);
+    const pct = Math.round((filled / 14) * 100); // 전체 14문항 기준
+    setProgress(pct);
+    return;
+  }
+
+  const q1val = q1checked.value;
+  let total = 0, filled = 0;
+
+  // 기본정보 (2)
+  total += 2;
+  if (document.querySelector('input[name="name"]').value.trim()) filled++;
+  if (document.querySelector('input[name="district"]').value.trim()) filled++;
+
+  // Q1 (1)
+  total += 1; filled += 1;
+
+  if (q1val === '사용함') {
+    // Q2 (1)
+    total += 1;
+    const rows = document.querySelectorAll('#usageBody tr');
+    let hasUsage = false;
+    rows.forEach(tr => {
+      const p = tr.querySelector('input[name^="use_place"]')?.value;
+      const c = tr.querySelector('select[name^="use_category"]')?.value;
+      if (p && c) hasUsage = true;
+    });
+    if (hasUsage) filled++;
+
+    // Q3 활성화된 행 (각 1점)
+    const activeRows = document.querySelectorAll('.q3-row.q3-active');
+    activeRows.forEach(row => {
+      total += 1;
+      const rname = row.querySelector('input[type="radio"]')?.name;
+      if (rname && document.querySelector('input[name="' + rname + '"]:checked')) filled++;
+    });
+
+    // Q4 (1)
+    total += 1;
+    if (document.querySelector('input[name="best_1_item"]')?.value.trim()) filled++;
+  }
+
+  if (q1val === '사용하지않음') {
+    // Q5 (1)
+    total += 1;
+    if (document.querySelector('input[name="q5"]:checked')) filled++;
+  }
+
+  // Q6 (1)
+  total += 1;
+  if (document.querySelector('input[name="q6"]:checked')) filled++;
+
+  // Q7 (1)
+  total += 1;
+  if (document.querySelector('input[name="q7"]:checked')) filled++;
+
+  // Q8 (4문항)
+  for (let i = 1; i <= 4; i++) {
+    total += 1;
+    if (document.querySelector('input[name="q8_' + i + '"]:checked')) filled++;
+  }
+
+  // Q9 (1)
+  total += 1;
+  if (document.querySelector('input[name="q9"]:checked')) filled++;
+
+  // Q10 (1)
+  total += 1;
+  if (document.querySelector('input[name="q10"]:checked')) filled++;
+
+  // Q11 (1)
+  total += 1;
+  if (document.querySelector('input[name="q11"]:checked')) filled++;
+
+  // Q12 (1)
+  total += 1;
+  if (document.querySelector('input[name="q12"]:checked')) filled++;
+
+  // Q13 파일
+  total += 1;
+  if (selectedFiles.length > 0 || document.querySelectorAll('#fileList .file-item').length > 0) filled++;
+
+  const pct = Math.min(Math.round((filled / total) * 100), 100);
+  setProgress(pct);
+}
+
+function setProgress(pct) {
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+document.querySelectorAll('input, select, textarea').forEach(el => {
+  el.addEventListener('change', updateProgress);
+  el.addEventListener('input', updateProgress);
+});
+// Q3 활성 행 변경 시에도 진행률 갱신
+document.getElementById('q3Body').addEventListener('change', updateProgress);
+
+function collectFormData() {
+  const fd = new FormData(document.getElementById('mainForm'));
+  const data = {};
+  data.timestamp = new Date().toISOString();
+  ['name','district'].forEach(k => data[k] = fd.get(k) || '');
+  data.q1 = fd.get('q1') || '';
+  const usageRows = [];
+  document.querySelectorAll('#usageBody tr').forEach(tr => {
+    const date = tr.querySelector(`input[name^="use_date"]`)?.value;
+    const place = tr.querySelector(`input[name^="use_place"]`)?.value;
+    const amount = tr.querySelector(`input[name^="use_amount"]`)?.value;
+    const cat = tr.querySelector(`select[name^="use_category"]`)?.value;
+    if (date || place || amount) usageRows.push({ date, place, amount, category: cat });
+  });
+  data.usage_rows = JSON.stringify(usageRows);
+  ['leisure','body','mind','social','edu','career','living','etc'].forEach(k => { data[`help_${k}`] = fd.get(`help_${k}`) || ''; });
+  [1,2,3].forEach(n => { data[`best_${n}_item`] = fd.get(`best_${n}_item`) || ''; data[`best_${n}_reason`] = fd.get(`best_${n}_reason`) || ''; });
+  data.q5 = fd.get('q5') || ''; data.q5_etc = fd.get('q5_etc') || '';
+  data.q6 = fd.getAll('q6').join(', '); data.q6_etc = fd.get('q6_etc') || '';
+  data.q7 = fd.get('q7') || ''; data.q7_inc_reason = fd.get('q7_inc_reason') || ''; data.q7_dec_reason = fd.get('q7_dec_reason') || '';
+  [1,2,3,4].forEach(n => { data[`q8_${n}`] = fd.get(`q8_${n}`) || ''; });
+  data.q9 = fd.getAll('q9').join(', ');
+  data.q10 = fd.get('q10') || ''; data.q10_org = fd.get('q10_org') || ''; data.q10_content = fd.get('q10_content') || '';
+  data.q11 = fd.getAll('q11').join(', ');
+  data.q12 = fd.get('q12') || '';
+  return data;
+}
+
+// ===== 제출 =====
+document.getElementById('mainForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const nameVal = document.querySelector('input[name="name"]').value.trim();
+  const districtVal = document.querySelector('input[name="district"]').value.trim();
+  if (!nameVal) { showToast('성명을 입력해 주세요.', 'error'); return; }
+  if (!districtVal) { showToast('자치구명을 입력해 주세요.', 'error'); return; }
+  if (!document.querySelector('input[name="q1"]:checked')) { showToast('1번: 자기돌봄비 사용 여부를 선택해 주세요.', 'error'); return; }
+
+  const q1val = document.querySelector('input[name="q1"]:checked').value;
+
+  if (q1val === '사용함') {
+    // Q2: 사용내역 최소 1행 입력 확인
+    const usageRows = document.querySelectorAll('#usageBody tr');
+    let hasUsage = false;
+    usageRows.forEach(tr => {
+      const place = tr.querySelector('input[name^="use_place"]')?.value;
+      const cat = tr.querySelector('select[name^="use_category"]')?.value;
+      if (place && cat) hasUsage = true;
+    });
+    if (!hasUsage) { showToast('2번: 사용처와 사용분야를 최소 1건 입력해 주세요.', 'error'); return; }
+
+    // Q3: 활성화된 분야 모두 응답 확인
+    const activeRows = document.querySelectorAll('.q3-row.q3-active');
+    for (const row of activeRows) {
+      const name = row.querySelector('input[type="radio"]')?.name;
+      if (name && !document.querySelector('input[name="' + name + '"]:checked')) {
+        const cat = row.getAttribute('data-category');
+        showToast('3번: [' + cat + '] 항목의 도움 정도를 선택해 주세요.', 'error'); return;
+      }
+    }
+    if (activeRows.length === 0) { showToast('2번 문항에 사용분야를 선택해야 3번을 응답할 수 있습니다.', 'error'); return; }
+
+    // Q4: 1순위 필수
+    if (!document.querySelector('input[name="best_1_item"]').value.trim()) {
+      showToast('4번: 1순위 품목을 입력해 주세요.', 'error'); return;
+    }
+  }
+
+  if (q1val === '사용하지않음') {
+    if (!document.querySelector('input[name="q5"]:checked')) { showToast('5번: 미사용 이유를 선택해 주세요.', 'error'); return; }
+  }
+
+  // Q6: 체크박스 최소 1개
+  if (!document.querySelector('input[name="q6"]:checked')) { showToast('6번: 향후 사용 계획을 최소 1개 선택해 주세요.', 'error'); return; }
+  // Q7
+  if (!document.querySelector('input[name="q7"]:checked')) { showToast('7번: 자기돌봄 시간 변화를 선택해 주세요.', 'error'); return; }
+  // Q8
+  for (let i = 1; i <= 4; i++) {
+    if (!document.querySelector('input[name="q8_' + i + '"]:checked')) {
+      showToast('8번: ' + i + '번 문항을 선택해 주세요.', 'error'); return;
+    }
+  }
+  // Q9
+  if (!document.querySelector('input[name="q9"]:checked')) { showToast('9번: 가족 돌봄 변화 항목을 최소 1개 선택해 주세요.', 'error'); return; }
+  // Q10
+  if (!document.querySelector('input[name="q10"]:checked')) { showToast('10번: 복지자원 이용 여부를 선택해 주세요.', 'error'); return; }
+  // Q11
+  if (!document.querySelector('input[name="q11"]:checked')) { showToast('11번: 필요한 도움 항목을 최소 1개 선택해 주세요.', 'error'); return; }
+  // Q12
+  if (!document.querySelector('input[name="q12"]:checked')) { showToast('12번: 상담 필요 여부를 선택해 주세요.', 'error'); return; }
+
+  // Q13: 카드내역서 파일 필수
+  const existingFileItems = document.querySelectorAll('#fileList .file-item');
+  if (selectedFiles.length === 0 && existingFileItems.length === 0) {
+    showToast('13번: 카드내역서 파일을 업로드해 주세요.', 'error');
+    document.getElementById('uploadZone').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '파일 업로드 중...';
+
+  const driveUrls = await uploadFilesToDrive(nameVal, districtVal || '미기재');
+
+  // 업로드 실패 파일이 있으면 제출 차단
+  const failedFiles = selectedFiles.filter(f => f.status === 'error');
+  if (failedFiles.length > 0) {
+    btn.disabled = false;
+    btn.textContent = isEditMode ? '수정 내용 저장하기' : '제출하기';
+    showToast('파일 업로드에 실패했습니다. 재시도 후 제출해 주세요.', 'error');
+    // 실패한 파일에 재시도 버튼 렌더링
+    renderFileListWithRetry();
+    return;
+  }
+
+  btn.textContent = isEditMode ? '수정 내용 저장 중...' : '응답 저장 중...';
+
+  const data = collectFormData();
+  data.q13_files = selectedFiles.map(f => f.file.name).join(', ');
+  data.q13_drive_urls = driveUrls.filter(Boolean).join(', ');
+  data.q13_status = selectedFiles.every(f => f.status === 'done') ? '전체 업로드 완료' : selectedFiles.length === 0 ? '파일 없음(기존 유지)' : '일부 실패';
+
+  // 수정 코드 결정
+  const editCode = isEditMode ? currentEditCode : generateEditCode();
+  data.editCode = editCode;
+  data.isRevision = isEditMode ? 'true' : 'false';
+  data.revisionTimestamp = new Date().toISOString();
+
+  try {
+    if (APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+      const params = new URLSearchParams(data);
+      await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params.toString() });
+    } else {
+      // 테스트 모드: localStorage에 저장
+      localStorage.setItem('form_' + editCode, JSON.stringify(data));
+      console.log('저장 데이터:', data);
+      await new Promise(r => setTimeout(r, 500));
+    }
+
+    // 성공 화면
+    document.getElementById('submitWrap').style.display = 'none';
+    document.getElementById('editModeBanner').classList.remove('show');
+    document.getElementById('successPage').style.display = 'block';
+    document.getElementById('editCodeDisplay').textContent = editCode;
+    document.getElementById('editCodeInput').value = editCode;
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressPct').textContent = '100%';
+    isEditMode = false;
+    currentEditCode = null;
+    showToast(isEditMode ? '✅ 수정이 완료되었습니다!' : '✅ 제출이 완료되었습니다!', 'success');
+  } catch(err) {
+    console.error(err);
+    btn.disabled = false;
+    btn.textContent = isEditMode ? '수정 내용 저장하기' : '제출하기';
+    showToast('오류가 발생했습니다. 다시 시도해 주세요.', 'error');
+  }
+});
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => { t.classList.remove('show'); }, 3500);
+}
+</script>
+</body>
+</html>
